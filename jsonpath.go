@@ -45,10 +45,12 @@ func Compile(jpath string) (*Compiled, error) {
 	if err != nil {
 		return nil, err
 	}
+	startTokenIndex := 1
 	if tokens[0] != "@" && tokens[0] != "$" {
-		return nil, fmt.Errorf("$ or @ should in front of path")
+		// Root node is optional
+		startTokenIndex = 0
 	}
-	tokens = tokens[1:]
+	tokens = tokens[startTokenIndex:]
 	res := Compiled{
 		path:  jpath,
 		steps: make([]step, len(tokens)),
@@ -154,8 +156,6 @@ func tokenize(query string) ([]string, error) {
 				tokens = append(tokens, token[:])
 				token = ""
 				continue
-			} else {
-				return nil, fmt.Errorf("should start with '$'")
 			}
 		}
 		if token == "." {

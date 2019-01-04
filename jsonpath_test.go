@@ -96,7 +96,7 @@ func Test_jsonpath_JsonPathLookup_1(t *testing.T) {
 	if res_v, ok := res.([]interface{}); ok != true || res_v[0].(float64) != 8.95 || res_v[1].(float64) != 12.99 || res_v[2].(float64) != 8.99 || res_v[3].(float64) != 22.99 {
 		t.Errorf("exp: [8.95, 12.99, 8.99, 22.99], got: %v", res)
 	}
-	
+
 	// range
 	res, err = JsonPathLookup(json_data, "$.store.book[0:1].price")
 	t.Log(err, res)
@@ -1179,13 +1179,13 @@ func Test_jsonpath_rootnode_is_array_range(t *testing.T) {
 		t.Logf("idx: %v, v: %v", idx, v)
 	}
 	if len(ares) != 2 {
-		t.Fatal("len is not 2. got: %v", len(ares))
+		t.Fatalf("len is not 2. got: %v", len(ares))
 	}
 	if ares[0].(float64) != 12.34 {
-		t.Fatal("idx: 0, should be 12.34. got: %v", ares[0])
+		t.Fatalf("idx: 0, should be 12.34. got: %v", ares[0])
 	}
 	if ares[1].(float64) != 13.34 {
-		t.Fatal("idx: 0, should be 12.34. got: %v", ares[1])
+		t.Fatalf("idx: 0, should be 12.34. got: %v", ares[1])
 	}
 }
 
@@ -1232,7 +1232,7 @@ func Test_jsonpath_rootnode_is_nested_array_range(t *testing.T) {
 		t.Logf("idx: %v, v: %v", idx, v)
 	}
 	if len(ares) != 2 {
-		t.Fatal("len is not 2. got: %v", len(ares))
+		t.Fatalf("len is not 2. got: %v", len(ares))
 	}
 
 	//FIXME: `$[:1].[0].test` got wrong result
@@ -1242,4 +1242,33 @@ func Test_jsonpath_rootnode_is_nested_array_range(t *testing.T) {
 	//if ares[1].(float64) != 3.1 {
 	//	t.Fatal("idx: 0, should be 3.1, got: %v", ares[1])
 	//}
+}
+
+func Test_jsonpath_missing_dollar_sign(t *testing.T) {
+	path := "store.bicycle.color"
+	res, e := JsonPathLookup(json_data, path)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if res != "red" {
+		t.Fatalf("Expected %v=%v, got: %v", path, "red", res)
+	}
+}
+
+func Test_jsonpath_missing_dollar_sign_root_is_array(t *testing.T) {
+	data := `[ [ {"test":1.1}, {"test":2.1} ], [ {"test":3.1}, {"test":4.1} ] ]`
+	var unmarshaled_data interface{}
+	e := json.Unmarshal([]byte(data), &unmarshaled_data)
+	if e != nil {
+		t.Fatal(e)
+	}
+	path := "[0][1].test"
+
+	res, e := JsonPathLookup(unmarshaled_data, path)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if res != 2.1 {
+		t.Fatalf("Expected %v=%v, got: %v", path, 2.1, res)
+	}
 }
