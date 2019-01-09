@@ -1,7 +1,7 @@
 JsonPath
 ----------------
 
-![Build Status](https://travis-ci.org/oliveagle/jsonpath.svg?branch=master)
+Forked from https://github.com/oliveagle/jsonpath in order to support json paths that DON'T begin with the root indicator: __$__
 
 A golang implementation of JsonPath syntax.
 follow the majority rules in http://goessner.net/articles/JsonPath/
@@ -100,6 +100,7 @@ example json path syntax.
 
 | jsonpath | result|
 | :--------- | :-------|
+| __expensive__ 			                       | 10|
 | $.expensive 			                           | 10|
 | $.store.book[0].price                            | 8.95|
 | $.store.book[-1].isbn                            | "0-395-19395-8"|
